@@ -1,7 +1,7 @@
 SayUstTweet
 ===========
 
-Ustream配信時、Twtterのソーシャルストリームを読み上げる（Mac）
+[ Ustream配信時、Twtterのソーシャルストリームを読み上げる for Mac ]
 
 1. tweepyをインストール
    $ sudo easy_install tweepy
@@ -20,5 +20,10 @@ Ustream配信時、Twtterのソーシャルストリームを読み上げる（M
 
 6. 任意のフォルダに置いてターミナルから実行
    $ python say-ust.py
+
+[ 既知の問題点 ]
+グリフなどUnicodeの外字がツイート本文、もしくはスクリーンネームに存在すると、そのツイートは読み上げられない
+（Terminalへの出力はされる）。
+# lexとか使ったらなんとかなるのかもしれなけど、まったくわからないのでお手上げ_(:3｣∠)_ 
 
 enjoy!
