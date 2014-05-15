@@ -7,12 +7,11 @@
 # URL:      http://logi.hateblo.jp/
 # require:  SayKotoeri, Saykana or SayKotoeri2
 # OS:       for Mac Only
-# Link:     [PythonでTwitterのタイムラインをストリーミングで読み上げさせるfor Mac[tweepy] « haya14busa ](http://haya14busa.com/tweepy-read-aloud-tl/)
-# Link:     [twitterをターミナル上で楽しむ(python)](http://www.nari64.com/?p=200)
+# Link:     [PythonでTwitterのタイムラインをストリーミングで読み上げさせるfor Mac[tweepy] « haya14busa](http://haya14busa.com/tweepy-read-aloud-tl/)
+# Link:     [tweepyでstreamingを使う - 備忘](http://monowasure78.hatenablog.com/entry/2013/11/26/tweepy%E3%81%A7streaming%E3%82%92%E4%BD%BF%E3%81%86
+# Link:     [tweepyでリアルタイムハッシュタグ検索 — 螺旋階段を一歩ずつ](http://hironow.bitbucket.org/blog/html/2014/01/18/tweepy_hashtag_search.html)
 
 import tweepy
-import logging
-import urllib
 from subprocess import call
 import re
 import sys, codecs
@@ -24,7 +23,7 @@ def Setup():
     global mode, name , replace_str
     
     # 0（ハッシュタグ）、1（メンション）
-    mode = 0 
+    mode = 0
     # ハッシュタグもしくはメンションの文字列を指定
     name = 'xxxxx'
     
@@ -32,7 +31,9 @@ def Setup():
     # 置換する文字列をカンマ区切りで指定
     'Twitter,ツイッター',
     'Ustream,ユーストリーム',
+    'Ust,ユースト',
     'Python,パイソン',
+    '読み上げ,よみあげ',
     ]
     
     return Setup
@@ -49,18 +50,18 @@ def get_oauth():
 
 def str_replace(string):
     string = re.sub('&.+;', ' ', string)
+    # Ustが追加する文字列を削除
+    string = re.sub('\([#@]' + name + '[^\)]+\)', '', string)
     # remove URL
     string = re.sub('(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)', 'URL', string)
     # remove quote
     string = re.sub('"', ' ', string)
     string = re.sub("'", ' ', string)
     string = re.sub('\/', ' ', string)
-
+    
     string = re.sub('RT', 'Retweet', string)
-    # Ustが追加する文字列を削除
-    string = re.sub('\(\#' + name + '[^\)]+\)', '', string)
     # ハッシュタグを削除
-    string = re.sub('(?:\#|\uFF03)([a-zA-Z0-9_\u3041-\u3094\u3099-\u309C\u30A1-\u30FA\u3400-\uD7FF\uFF10-\uFF19\uFF20-\uFF3A\uFF41-\uFF5A\uFF66-\uFF9E]+)', '', string)    
+    string = re.sub('#[0-9a-zA-Z_]{1,15}', '', string)  
     # メンション、リプライを削除
     string = re.sub('@[0-9a-zA-Z_]{1,15}', '', string) 
     
@@ -98,11 +99,11 @@ class CustomStreamListener(tweepy.StreamListener):
 
 def main():
     auth = get_oauth()
-    stream = tweepy.Stream(auth, CustomStreamListener())
     Setup()
-    if mode : str = '@' + name
-    else : str = '#' + name
-    stream.filter(track=[str])
+    if not mode : str = '\u0040' + name
+    else : str = '@' + name
+    stream = tweepy.Stream(auth, CustomStreamListener(), secure=True)
+    stream.filter(languages=['ja'],track=[str])
     stream.timeout = None
 
 if __name__ == "__main__":
