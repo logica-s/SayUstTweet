@@ -58,7 +58,7 @@ def str_replace(string):
 
     string = re.sub('RT', 'Retweet', string)
     # Ustが追加する文字列を削除
-    string = re.sub('\(\#logimac[^\)]+\)', '', string)
+    string = re.sub('\(\#' + name + '[^\)]+\)', '', string)
     # ハッシュタグを削除
     string = re.sub('(?:\#|\uFF03)([a-zA-Z0-9_\u3041-\u3094\u3099-\u309C\u30A1-\u30FA\u3400-\uD7FF\uFF10-\uFF19\uFF20-\uFF3A\uFF41-\uFF5A\uFF66-\uFF9E]+)', '', string)    
     # メンション、リプライを削除
