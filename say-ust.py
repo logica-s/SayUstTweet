@@ -33,13 +33,28 @@ def Setup():
     
     replace_str = [
     # 置換する文字列をカンマ区切りで指定
-    'Twitter,ツイッター',
-    'Ustream,ユーストリーム',
-    'Ust,ユースト',
-    'pixiv,ピクシブ',
-    'Pixiv,ピクシブ',
-    'Python,パイソン',
-    'bot,ボット',
+    # パターンには正規表現を使用できます
+    u'(The |THE ),ザ ',
+    u'[%％],パーセント',
+    u'[Tt]witter,ツイッター',
+    u'[Uu]stream,ユーストリーム',
+    u'[Uu]st,ユースト',
+    u'[Pp]ixiv,ピクシブ',
+    u'[Ii]nstagram,インスタグラム',
+    u'[Aa]ppear,アピアー',
+    u'[Aa]ppear.in,アピアー・イン',
+    u'[Aa]dobe,アドビ',
+    u'[Mm]acintosh,マッキントッシュ',
+    u'[Mm]ac,マック',
+    u'[Ww]indows,ウィンドーズ',
+    u'(LINUX|Linux),リナックス',
+    u'[Uu]buntu,ウブントゥ',
+    u'[Pp]ython,パイソン',
+    u'(VOCALOID|Vocaloid),ボーカロイド',
+    u'[Bb]ot,ボット',
+    u'(orz|OTL),がっくり',
+    u'℃,度',
+    u'読み上げ,よみあげ'
     ]
     
     return Setup
@@ -67,11 +82,11 @@ def str_replace(string):
     
     string = re.sub('RT', 'Retweet', string)
     # ハッシュタグを削除
-    string = re.sub('#[^#\s$]{1,15}', '', string)  
+    string = re.sub('#[^#\s$]{1,}', '', string)  
     # メンション、リプライを削除
     string = re.sub('@[0-9a-zA-Z_]{1,15}', '', string)
 
-    # w（ワラ）、8（パチパチ）
+    # w（ワラ）、8（パチパチ）、TUEEE（つえー）
     if not (isinstance(string, unicode)):
         string = unicode(string, 'utf-8')
     string= string.replace('\u003d','=')
@@ -82,10 +97,11 @@ def str_replace(string):
         string = re.sub('[^A-Za-z\s][wW]', buff + u'ワラ', string)
     string = re.sub('[wW]{2,}', u'ワラワラワラ', string)
     string = re.sub('8{3,}', u'ぱちぱちぱち', string)
-
+    string = re.sub('TS?UE{3,}', u'つえーーー', string)
+    
     for buff in replace_str:
         list_value = buff.split(',')
-        string = string.replace(list_value[0],list_value[1])
+        string = string.replace(list_value[0], list_value[1])
     return string
 
 class CustomStreamListener(tweepy.StreamListener):
@@ -101,8 +117,11 @@ class CustomStreamListener(tweepy.StreamListener):
                         created = status.created_at)
                 read_text = str_replace(status.author.name.encode('utf-8')) + 'さん　' + str_replace(status.text.encode('utf-8'))
                 
-                #特殊文字を削除
-                read_text = re.sub(ur'[\u2600-\u2687\u2219-\u2761\ue468-\ue5df\uea80-\ueb88\ue63e-\ue6a5\ue6ac-\ue6ae\ue6b1-\ue6ba\ue6ce-\ue757\ue001-\ue05a\ue101-\ue15a\ue201-\ue253\ue301-\ue34d\ue401-\ue44c\ue501-\ue537%s\ue600-\ue619]', '', read_text)
+                # 特殊文字を削除
+                # -- 箇条書き／星
+                read_text = re.sub(ur'[\u2600-\u2687\u2219-\u2761]', '', read_text)
+                # -- 絵文字
+                read_text = re.sub(ur'[\ue468-\ue5df\uea80-\ueb88\ue63e-\ue6a5\ue6ac-\ue6ae\ue6b1-\ue6ba\ue6ce-\ue757\ue001-\ue05a\ue101-\ue15a\ue201-\ue253\ue301-\ue34d\ue401-\ue44c\ue501-\ue537%s\ue600-\ue619]', '', read_text)
             
                 call(['SayKotoeri -s "-s 120" "{text}" >/dev/null 2>&1'.format(text=read_text)], shell=True)
 
