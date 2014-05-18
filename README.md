@@ -21,12 +21,17 @@ SayUstTweet
 6. 任意のフォルダに置いてターミナルから実行
    $ python say-ust.py
 
+※ PythonのデフォルトエンコーディングをUnicodeに指定しないとエラーが出るかもしれません。
+   その場合は、お使いのPythonのsite-packagesディレクトリ以下にsitecustomize.pyを作成し、
+   
+   
+   import sys
+   sys.setdefaultencoding("utf-8")
 
-[ 既知の問題点 ]
+   encoding = "utf-8"
+   
+   と記入してください。
 
-グリフなどUnicodeの外字がツイート本文、もしくはスクリーンネームに存在すると、そのツイートは読み上げられない
-（Terminalへの出力はされる）。
-lexとか使ったらなんとかなるのかもしれなけど、まったくわからないのでお手上げ。
 
 
 enjoy!
