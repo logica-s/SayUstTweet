@@ -15,6 +15,8 @@ SayUstTweet
    SayKotoeri >> https://sites.google.com/site/nicohemus/home/saykotoeri
    
    SayKotoeri2 >> https://sites.google.com/site/nicohemus/home/saykotoeri2
+   
+   （デフォルトではSayKotoeri2を使用しますSayKotoeriを使用する場合はコードの該当部分を書き換えて下さい）
 
 
 4. ハッシュタグorメンション、どちらで動作させるかを指定と、ハッシュタグ（またはメンション＝アカウントid）の文字列を
