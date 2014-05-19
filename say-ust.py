@@ -121,8 +121,13 @@ def str_replace(string):
     string = re.sub('[TＴ][SＳ]?[UＵ][EＥ]{3,}', u'つえーーー', string)
     
     # 日付
-    match = re.compile(ur'([\d]{1,2})[\/／]([\d]{1,2})')
-    string = match.sub(ur'\1月\2日', string)
+    match = re.compile(u'(\D|^)([1-9][0-9]{3})[\/／]([1-9]|1[0-2])[\/／]([0-9]|[1-2][0-9]|3[0-1])(\D|$)')
+    string = match.sub(ur'\1\2年\3月\4日\5', string)
+    match = re.compile(u'(\D|^)([1-9]|1[0-2])[\/／]([0-9]|[1-2][0-9]|3[0-1])(\D|$)')
+    string = match.sub(ur'\1\2月\3日\4', string)
+    # n分のn
+    match = re.compile(u'(\D|^)([\d]{1,2})[\/／]([\d]{1,2})(\D|$)')
+    string = match.sub(ur'\1\3ぶんの\2\4', string)
 
     # バージョン
     match = re.compile(r'[VvＶｖ][eｅ][rｒ][\.．]?([^A-Za-zＡ-Ｚａ-ｚ])')
