@@ -6,11 +6,15 @@ SayUstTweet
 1. tweepyをインストール
    $ sudo easy_install tweepy
 
-2. SayKanaをインストール
-   こちらから >> http://quickware.a-quest.com/saykana/about.htm
+( 2. SayKanaをインストール ※ SayKotoeri2を使用する場合は要らない
+   こちらから >> http://quickware.a-quest.com/saykana/about.htm )
 
-3. Saykotoeriをインストール
-   こちらから >> https://sites.google.com/site/nicohemus/home/saykotoeri
+3. SayKotoeriもしくはSayKotoeri2をインストール
+
+   SayKotoeri >> https://sites.google.com/site/nicohemus/home/saykotoeri
+   
+   SayKotoeri2 >> https://sites.google.com/site/nicohemus/home/saykotoeri2
+
 
 4. ハッシュタグorメンション、どちらで動作させるかを指定と、ハッシュタグ（またはメンション＝アカウントid）の文字列を
    コードの該当部分に記入
