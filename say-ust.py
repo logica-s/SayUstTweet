@@ -65,10 +65,10 @@ def Setup():
     return Setup
 
 def get_oauth():
-    CONSUMER_KEY='XXXXXXXXXXXXXXXXXXXX'
-    CONSUMER_SECRET='XXXXXXXXXXXXXXXXXXX'
-    ACCESS_TOKEN_KEY='XXXXXXXXXXXXXXXXXXX'
-    ACCESS_TOKEN_SECRET='XXXXXXXXXXXXXXXXXXX'
+    CONSUMER_KEY='Bo1d6GMo44oKQl62sHoJ1G7GM'
+    CONSUMER_SECRET='pRFkPFm8PD0nhKjPGbZXauFv0QRYr8zV0TavaHoH6jbwOWMVFm'
+    ACCESS_TOKEN_KEY='4239291-kHnmLLT1feTHRhPDbvDga5Ml0dnGH8a9VQSEo5YvKq'
+    ACCESS_TOKEN_SECRET='HF7M9PcnmTKCv55gPC89sun2NU24Pte1V2ARtsrIqH85V'
 
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET)
@@ -91,6 +91,10 @@ def str_replace(string):
     # メンション、リプライを削除
     string = re.sub('@[0-9a-zA-Z_]{1,15}', '', string)
 
+    for buff in replace_str:
+        list_value = buff.split(',')
+        string = re.sub(list_value[0], list_value[1], string)
+
     # w（ワラ）、8（パチパチ）、TUEEE（つえー）
     if not (isinstance(string, unicode)):
         string = unicode(string, 'utf-8')
@@ -103,6 +107,16 @@ def str_replace(string):
     string = re.sub(u'[wWｗＷ]{2,}', u'ワラワラワラ', string)
     string = re.sub('[8８]{3,}', u'ぱちぱちぱち', string)
     string = re.sub('[TＴ][SＳ]?[UＵ][EＥ]{3,}', u'つえーーー', string)
+
+    # 日付
+    match = re.search(u'([\d]{1,2})[\/／]([\d]{1,2})', string, re.U)
+    if match != None:
+        string = re.sub(u'([\d]{1,2})[\/／]([\d]{1,2})', match.group(1) + u'月 ' + match.group(2) + '日' , string)
+
+    # バージョン
+    match = re.search(u'[VvＶｖ][eｅ][rｒ][\.．]?(\d)', string, re.U)
+    if match != None:
+        string = re.sub(u'[VvＶｖ][eｅ][rｒ][\.．]?\d', u'バージョン' + match.group(1) , string)
     
     string = re.sub(u'[\#＃]', u'シャープ', string)
     string = re.sub(u'[$＄]', u'ドル', string)
@@ -131,10 +145,7 @@ def str_replace(string):
 
     # SayKotoeriでエラーになる文字を削除
     string = re.sub(ur'[^\u0020-\u007E\u0082\u0085\u0091-\u0094\u00A5\u00AB\u00B1\u00BB\u00F7\u2018-\u201F\u203B\u2212-\u2219\u221E\u22EF\u25A0\u25A1\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uFF01-\uFF9F]', u'　', string)
-    
-    for buff in replace_str:
-        list_value = buff.split(',')
-        string = string.replace(list_value[0], list_value[1])
+
     return string
 
 class CustomStreamListener(tweepy.StreamListener):
