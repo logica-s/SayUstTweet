@@ -146,6 +146,8 @@ def str_replace(string):
     string = string.replace('*', u'＊')
     string = re.sub(u'[*⁎⁕]', u'＊', string)
     string = re.sub(u'[⁄⁄\`\´\'｀´\[\]©\|\(\)\{\}\*\․\^\_]', '', string)
+    string = re.sub(u'ゐ', u'い', string)
+    string = re.sub(u'ゑ', u'え', string)
     string = re.sub(u'[づ|ヅ]', u'ず', string)
     match = re.compile(u'続([かきくけこ])')
     match = re.compile(u'([\u3400-\u9FFF\uF900-\uFAFF])鶴')
