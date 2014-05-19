@@ -75,19 +75,19 @@ def get_oauth():
     return auth
 
 def str_replace(string):
-    string = re.sub('&.+;', ' ', string)
+
     # Ustが追加する文字列を削除
-    string = re.sub('\(\s?[#@]' + name + '[^\)]+\)', '', string)
+    string = re.sub('\([#@]' + name + '[^\)]+\)', '', string)
     # remove URL
     string = re.sub('(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)', 'URL', string)
     # remove quote
     string = re.sub('"', ' ', string)
     string = re.sub("'", ' ', string)
-    string = re.sub('\/', ' ', string)
+    string = re.sub('\/', u'／', string)
     
     string = re.sub('RT', 'Retweet', string)
     # ハッシュタグを削除
-    string = re.sub('#[^#\s$]{1,}', '', string)  
+    string = re.sub('#[0-9a-zA-Z_]{1,15}', '', string)    
     # メンション、リプライを削除
     string = re.sub('@[0-9a-zA-Z_]{1,15}', '', string)
 
@@ -100,23 +100,19 @@ def str_replace(string):
         string = unicode(string, 'utf-8')
     string= string.replace('\u003d','=')
     #string = unicodedata.normalize('NFKC', string)
-    match = re.search(u'([^A-Za-zＡ-Ｚａ-ｚ\s])[wW]\s', string, re.U)
-    if match != None:
-        buff = match.group(1)
-        string = re.sub(u'[^A-Za-zＡ-Ｚａ-ｚ\s][wW]\s', buff + u'ワラ ', string)
+    match = re.compile(ur'([^A-Za-zＡ-Ｚａ-ｚ\s])[wWｗＷ]')
+    string = match.sub(ur'\1ワラ', string)
     string = re.sub(u'[wWｗＷ]{2,}', u'ワラワラワラ', string)
     string = re.sub('[8８]{3,}', u'ぱちぱちぱち', string)
     string = re.sub('[TＴ][SＳ]?[UＵ][EＥ]{3,}', u'つえーーー', string)
-
+    
     # 日付
-    match = re.search(u'([\d]{1,2})[\/／]([\d]{1,2})', string, re.U)
-    if match != None:
-        string = re.sub(u'([\d]{1,2})[\/／]([\d]{1,2})', match.group(1) + u'月 ' + match.group(2) + '日' , string)
+    match = re.compile(ur'([\d]{1,2})[\/／]([\d]{1,2})')
+    string = match.sub(ur'\1月\2日', string)
 
     # バージョン
-    match = re.search(u'[VvＶｖ][eｅ][rｒ][\.．]?(\d)', string, re.U)
-    if match != None:
-        string = re.sub(u'[VvＶｖ][eｅ][rｒ][\.．]?\d', u'バージョン' + match.group(1) , string)
+    match = re.compile(r'[VvＶｖ][eｅ][rｒ][\.．]?([^A-Za-zＡ-Ｚａ-ｚ])')
+    string = match.sub(ur'バージョン\1', string)
     
     string = re.sub(u'[\#＃]', u'シャープ', string)
     string = re.sub(u'[$＄]', u'ドル', string)
@@ -124,10 +120,6 @@ def str_replace(string):
     string = string.replace('&amp;', u'アンド')
     string = re.sub(u'[&＆]', u'アンド', string)
     string = re.sub(u'[@＠]', u'アット', string)
-    match = re.search(u'[VvＶｖ][eｅ][rｒ][\.．]?(\d)', string, re.U)
-    if match != None:
-        buff = match.group(1)
-        string = re.sub(u'[VvＶｖ][eｅ][rｒ][\.．]?\d', u'バージョン' + buff , string)
     
     # SaiKotoeriのエラー対策
     string = string.replace(u'•', u'・')
