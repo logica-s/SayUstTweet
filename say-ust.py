@@ -116,19 +116,21 @@ def str_replace(string):
         string = re.sub(u'[VvＶｖ][eｅ][rｒ][\.．]?\d', u'バージョン' + buff , string)
     
     # SaiKotoeriのエラー対策
-    string = string.replace('\(', '（')
+    string = string.replace(u'•', u'・')
     string = string.replace('\)', '）')
     string = string.replace('*', u'＊')
-    string = re.sub(u'[\`\´\'｀´\[\]©\|\(\)\{\}\*]', '', string)
+    string = re.sub(u'[*⁎⁕]', u'＊', string)
+    string = re.sub(u'[⁄⁄\`\´\'｀´\[\]©\|\(\)\{\}\*\․]', '', string)
     string = re.sub(u'[づ|ヅ]', u'ず', string)
     string = re.sub(u'[ぢ|ヂ]', u'じ', string)
     string = re.sub(u'鼻血', u'はなじ', string)
     string = re.sub(u'縮', u'ちじ', string)
     string = string.replace(u'°̥', '')
     string = re.sub('[\-]{2,}', u'——', string)
+    #string = string.replace('?', u'？')
 
     # SayKotoeriでエラーになる文字を削除
-    string = re.sub(ur'[^\u0020-\u007E\u0082\u0085\u0091-\u0094\u00A5\u00AB\u00B1\u00BB\u00F7\u2000-\u206F\u2212-\u2219\u221E\u22EF\u25A0\u25A1\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uFF01-\uFF9F]', u'　', string)
+    string = re.sub(ur'[^\u0020-\u007E\u0082\u0085\u0091-\u0094\u00A5\u00AB\u00B1\u00BB\u00F7\u2018-\u201F\u203B\u2212-\u2219\u221E\u22EF\u25A0\u25A1\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uFF01-\uFF9F]', u'　', string)
     
     for buff in replace_str:
         list_value = buff.split(',')
