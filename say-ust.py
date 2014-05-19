@@ -121,7 +121,8 @@ def str_replace(string):
     string = string.replace('*', u'＊')
     string = re.sub(u'[\`\´\'｀´\[\]©\|\(\)\{\}\*]', '', string)
     string = re.sub(u'[づ|ヅ]', u'ず', string)
-    string = re.sub(u'[血|ぢ|ヂ]', u'じ', string)
+    string = re.sub(u'[ぢ|ヂ]', u'じ', string)
+    string = re.sub(u'鼻血', u'はなじ', string)
     string = string.replace(u'°̥', '')
     string = re.sub('[\-]{2,}', u'——', string)
 
