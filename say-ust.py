@@ -51,6 +51,7 @@ def Setup():
     u'[Ww]ord[Pp]ress,ワードプレス',
     u'[Pp]ython,パイソン',
     u'(VOCALOID|Vocaloid),ボーカロイド',
+    u'[Bb]ot,ボット',
     u'℃,度',
     u'(orz|OTL),がっくり',
     u'読み上げ,よみあげ',
@@ -119,8 +120,8 @@ def str_replace(string):
     string = string.replace('\)', '）')
     string = string.replace('*', u'＊')
     string = re.sub(u'[\`\´\'｀´\[\]©\|\(\)\{\}\*]', '', string)
-    string = re.sub(u'[づ|ヅ]', 'ず', string)
-    string = re.sub(u'[血|ぢ|ヂ]', 'じ', string)
+    string = re.sub(u'[づ|ヅ]', u'ず', string)
+    string = re.sub(u'[血|ぢ|ヂ]', u'じ', string)
     string = string.replace(u'°̥', '')
     string = re.sub('[\-]{2,}', u'——', string)
 
