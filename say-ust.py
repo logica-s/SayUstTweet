@@ -14,7 +14,7 @@
 import tweepy
 from subprocess import call
 import re
-import unicodedata
+#import unicodedata
 import sys, codecs
 
 sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
@@ -35,7 +35,6 @@ def Setup():
     # 置換する文字列をカンマ区切りで指定
     # パターンには正規表現を使用できます
     u'(The |THE ),ザ ',
-    u'[%％],パーセント',
     u'[Tt]witter,ツイッター',
     u'[Uu]stream,ユーストリーム',
     u'[Uu]st,ユースト',
@@ -49,12 +48,17 @@ def Setup():
     u'[Ww]indows,ウィンドーズ',
     u'(LINUX|Linux),リナックス',
     u'[Uu]buntu,ウブントゥ',
+    u'[Ww]ord[Pp]ress,ワードプレス',
     u'[Pp]ython,パイソン',
     u'(VOCALOID|Vocaloid),ボーカロイド',
-    u'[Bb]ot,ボット',
-    u'(orz|OTL),がっくり',
     u'℃,度',
-    u'読み上げ,よみあげ'
+    u'(orz|OTL),がっくり',
+    u'読み上げ,よみあげ',
+    u'[○●]+,まる',
+    u'◎+,にじゅうまる',
+    u'[□■]+,しかく',
+    u'[△▲▽▼]+,さんかく',
+    u'秋色,あきいろ',
     ]
     
     return Setup
@@ -90,14 +94,38 @@ def str_replace(string):
     if not (isinstance(string, unicode)):
         string = unicode(string, 'utf-8')
     string= string.replace('\u003d','=')
-    string = unicodedata.normalize('NFKC', string)
-    match = re.search('([^A-Za-z\s])[wW]', string, re.U)
+    #string = unicodedata.normalize('NFKC', string)
+    match = re.search(u'([^A-Za-zＡ-Ｚａ-ｚ\s])[wW]\s', string, re.U)
     if match != None:
         buff = match.group(1)
-        string = re.sub('[^A-Za-z\s][wW]', buff + u'ワラ', string)
-    string = re.sub('[wW]{2,}', u'ワラワラワラ', string)
-    string = re.sub('8{3,}', u'ぱちぱちぱち', string)
-    string = re.sub('TS?UE{3,}', u'つえーーー', string)
+        string = re.sub(u'[^A-Za-zＡ-Ｚａ-ｚ\s][wW]\s', buff + u'ワラ ', string)
+    string = re.sub(u'[wWｗＷ]{2,}', u'ワラワラワラ', string)
+    string = re.sub('[8８]{3,}', u'ぱちぱちぱち', string)
+    string = re.sub('[TＴ][SＳ]?[UＵ][EＥ]{3,}', u'つえーーー', string)
+    
+    string = re.sub(u'[\#＃]', u'シャープ', string)
+    string = re.sub(u'[$＄]', u'ドル', string)
+    string = re.sub(u'[%％]', u'パーセント', string)
+    string = string.replace('&amp;', u'アンド')
+    string = re.sub(u'[&＆]', u'アンド', string)
+    string = re.sub(u'[@＠]', u'アット', string)
+    match = re.search(u'[VvＶｖ][eｅ][rｒ][\.．]?(\d)', string, re.U)
+    if match != None:
+        buff = match.group(1)
+        string = re.sub(u'[VvＶｖ][eｅ][rｒ][\.．]?\d', u'バージョン' + buff , string)
+    
+    # SaiKotoeriのエラー対策
+    string = string.replace('\(', '（')
+    string = string.replace('\)', '）')
+    string = string.replace('*', u'＊')
+    string = re.sub(u'[\`\´\'｀´\[\]©\|\(\)\{\}\*]', '', string)
+    string = re.sub(u'[づ|ヅ]', 'ず', string)
+    string = re.sub(u'[血|ぢ|ヂ]', 'じ', string)
+    string = string.replace(u'°̥', '')
+    string = re.sub('[\-]{2,}', u'——', string)
+
+    # SayKotoeriでエラーになる文字を削除
+    string = re.sub(ur'[^\u0020-\u007E\u0082\u0085\u0091-\u0094\u00A5\u00AB\u00B1\u00BB\u00F7\u2000-\u206F\u2212-\u2219\u221E\u22EF\u25A0\u25A1\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uFF01-\uFF9F]', u'　', string)
     
     for buff in replace_str:
         list_value = buff.split(',')
@@ -112,18 +140,14 @@ class CustomStreamListener(tweepy.StreamListener):
                 print u'---{name}/@{screen}---\n   {text}\nvia {src} {created}'.format(
                         name = status.author.name,
                         screen = status.author.screen_name,
-                        text = status.text,
+                        text = status.text.replace('&amp;','&'),
                         src = status.source,
                         created = status.created_at)
                 read_text = str_replace(status.author.name.encode('utf-8')) + 'さん　' + str_replace(status.text.encode('utf-8'))
-                
-                # 特殊文字を削除
-                # -- 箇条書き／星
-                read_text = re.sub(ur'[\u2600-\u2687\u2219-\u2761]', '', read_text)
-                # -- 絵文字
-                read_text = re.sub(ur'[\ue468-\ue5df\uea80-\ueb88\ue63e-\ue6a5\ue6ac-\ue6ae\ue6b1-\ue6ba\ue6ce-\ue757\ue001-\ue05a\ue101-\ue15a\ue201-\ue253\ue301-\ue34d\ue401-\ue44c\ue501-\ue537%s\ue600-\ue619]', '', read_text)
             
-                call(['SayKotoeri -s "-s 120" "{text}" >/dev/null 2>&1'.format(text=read_text)], shell=True)
+                call(['SayKotoeri2 -s 110 "{text}" >/dev/null 2>&1'.format(text=read_text)], shell=True)
+                # Kyokoさんを使う場合はこちら↓
+                #call(['echo "{text}" | say -v Kyoko -r 200 >/dev/null 2>&1'.format(text=read_text)], shell=True)
 
             except Exception, e:
                 print >> sys.stderr, 'Encountered Exception:', e
