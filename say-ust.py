@@ -32,8 +32,9 @@ def Setup():
     exception = 'xxxxx'
     
     replace_str = [
-    # 置換する文字列をカンマ区切りで指定
+    # 読み上げ時に置換する文字列をカンマ区切りで指定
     # パターンには正規表現を使用できます
+    #（SayKotoeriに通らない文字は正規表現を使用できなません）
     u'(The |THE ),ザ ',
     u'[Tt]witter,ツイッター',
     u'[Uu]stream,ユーストリーム',
@@ -53,22 +54,31 @@ def Setup():
     u'(VOCALOID|Vocaloid),ボーカロイド',
     u'[Bb]ot,ボット',
     u'℃,度',
+    u'[RＲ][\-—]18,アールじゅうはち',
     u'(orz|OTL),がっくり',
     u'読み上げ,よみあげ',
-    u'[○●]+,まる',
-    u'◎+,にじゅうまる',
-    u'[□■]+,しかく',
-    u'[△▲▽▼]+,さんかく',
+    u'描い,かい',
+    u'描か,かか',
+    u'描き,かき',
+    u'描け,かけ',
+    u'描く,かく',
+    u'描こ,かこ',
+    u'○○,まるまる', #これは正規表現にするとエラーが出る
+    u'〇〇,まるまる',
+    u'●●,まるまる',
+    u'春色,はるいろ',
+    u'夏色,なついろ',
     u'秋色,あきいろ',
+    u'冬色,ふゆいろ',
     ]
     
     return Setup
 
 def get_oauth():
-    CONSUMER_KEY='Bo1d6GMo44oKQl62sHoJ1G7GM'
-    CONSUMER_SECRET='pRFkPFm8PD0nhKjPGbZXauFv0QRYr8zV0TavaHoH6jbwOWMVFm'
-    ACCESS_TOKEN_KEY='4239291-kHnmLLT1feTHRhPDbvDga5Ml0dnGH8a9VQSEo5YvKq'
-    ACCESS_TOKEN_SECRET='HF7M9PcnmTKCv55gPC89sun2NU24Pte1V2ARtsrIqH85V'
+    CONSUMER_KEY='XXXXXXXXXXXXXXXXXXXXXXXX'
+    CONSUMER_SECRET='XXXXXXXXXXXXXXXXXXXXXXXX'
+    ACCESS_TOKEN_KEY='XXXXXXXXXXXXXXXXXXXXXXXX'
+    ACCESS_TOKEN_SECRET='XXXXXXXXXXXXXXXXXXXXXXXX'
 
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRET)
@@ -91,9 +101,13 @@ def str_replace(string):
     # メンション、リプライを削除
     string = re.sub('@[0-9a-zA-Z_]{1,15}', '', string)
 
+    # Setupでセットした置換。文字によっては正規表現マッチしないので（SayKotoeriに通らない文字）、replaceと処理を分ける
     for buff in replace_str:
         list_value = buff.split(',')
-        string = re.sub(list_value[0], list_value[1], string)
+        if (re.search('[\(\)\[\]\|]', list_value[0])) :
+            string = string.replace(list_value[0], list_value[1])
+        else :
+            string = re.sub(list_value[0], list_value[1], string)
 
     # w（ワラ）、8（パチパチ）、TUEEE（つえー）
     if not (isinstance(string, unicode)):
@@ -126,17 +140,24 @@ def str_replace(string):
     string = string.replace('\)', '）')
     string = string.replace('*', u'＊')
     string = re.sub(u'[*⁎⁕]', u'＊', string)
-    string = re.sub(u'[⁄⁄\`\´\'｀´\[\]©\|\(\)\{\}\*\․]', '', string)
+    string = re.sub(u'[⁄⁄\`\´\'｀´\[\]©\|\(\)\{\}\*\․\^\_]', '', string)
     string = re.sub(u'[づ|ヅ]', u'ず', string)
+    string = re.sub(u'稲妻', u'いなずま', string)
+    string = re.sub(u'人妻', u'ひとずま', string)
+    string = re.sub(u'行き詰ま', u'ゆきずま', string)
     string = re.sub(u'[ぢ|ヂ]', u'じ', string)
     string = re.sub(u'鼻血', u'はなじ', string)
     string = re.sub(u'縮', u'ちじ', string)
     string = string.replace(u'°̥', '')
     string = re.sub('[\-]{2,}', u'——', string)
-    #string = string.replace('?', u'？')
+    string = string.replace('?', u'？')
 
     # SayKotoeriでエラーになる文字を削除
     string = re.sub(ur'[^\u0020-\u007E\u0082\u0085\u0091-\u0094\u00A5\u00AB\u00B1\u00BB\u00F7\u2018-\u201F\u203B\u2212-\u2219\u221E\u22EF\u25A0\u25A1\u3000-\u303F\u3040-\u30FF\u4E00-\u9FFF\uFF01-\uFF9F]', u'　', string)
+
+    for buff in replace_str:
+        list_value = buff.split(',')
+        string = re.sub(list_value[0], list_value[1], string)
 
     return string
 
