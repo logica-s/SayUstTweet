@@ -8,13 +8,15 @@ SayUstTweet
    $ sudo easy_install tweepy
 
 
-( 2. SayKanaをインストール　※ SayKotoeri2を使用する場合は要らない
-
-   こちらから >> http://quickware.a-quest.com/saykana/about.htm )
-
 
 3. SayKotoeriもしくはSayKotoeri2をインストール
 
+
+   ( SayKanaをインストール　※ SayKotoeri2を使用する場合は要らない
+
+   こちらから >> http://quickware.a-quest.com/saykana/about.htm )
+   
+   
    SayKotoeri >> https://sites.google.com/site/nicohemus/home/saykotoeri
    
    SayKotoeri2 >> https://sites.google.com/site/nicohemus/home/saykotoeri2
