@@ -123,6 +123,7 @@ def str_replace(string):
     string = re.sub(u'[づ|ヅ]', u'ず', string)
     string = re.sub(u'[ぢ|ヂ]', u'じ', string)
     string = re.sub(u'鼻血', u'はなじ', string)
+    string = re.sub(u'縮', u'ちじ', string)
     string = string.replace(u'°̥', '')
     string = re.sub('[\-]{2,}', u'——', string)
 
