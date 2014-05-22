@@ -248,7 +248,7 @@ def str_replace(string):
     string = string.replace(u'髙', u'高')
     string = string.replace(u'♂', u'オス')
     string = string.replace(u'♀', u'メス')
-    string = string.replace('よめ', u'嫁') # ひらがなの「よ」から「め」への連続はなぜかエラー
+    string = string.replace(u'よめ', u'嫁') # ひらがなの「よ」から「め」への連続はなぜかエラー
 
     # 読みがアホな文字
     match = re.compile(u'天つ([\u3400-\u9FFF\uF900-\uFAFF])')
