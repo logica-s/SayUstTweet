@@ -1,7 +1,11 @@
 SayUstTweet
 ===========
 
+
 [ Ustream配信時、Twtterのソーシャルストリームを読み上げる for Mac ]
+
+
+2014/5/22のリリースより、TinySegmenter in Pythonを利用して文章を分割し、日本語OR英語を判別し日本語はSayKotoeri2、英語はsayコマンド（VoiceOver Victoria使用）に渡すようになりました！
 
 
 1. tweepyをインストール
@@ -26,16 +30,20 @@ SayUstTweet
    SayKotoeriを使用する場合はコードの該当部分を書き換えて下さい）
 
 
+4. TinySegmenter in Python（tinysegmenter.py）をスクリプト本体（say-ust.py）と同じディレクトリに置く
+   
+   TinySegmenter in Python >> http://lilyx.net/tinysegmenter-in-python/
 
-4. ハッシュタグorメンション、どちらで動作させるかを指定と、ハッシュタグ（またはメンション＝アカウントid）の文字列を
+
+
+5. ハッシュタグorメンション、どちらで動作させるかを指定と、ハッシュタグ（またはメンション＝アカウントid）の文字列を
    コードの該当部分に記入
 
 
-5. Twitter Developersに登録してCONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRETを
-   それぞれ取得してコードの該当部分に記入
+6. Twitter Developersに登録してCONSUMER_KEY, CONSUMER_SECRET, ACCESS_TOKEN_KEY, ACCESS_TOKEN_SECRETをそれぞれ取得してコードの該当部分に記入
 
 
-6. 任意のフォルダに置いてターミナルから実行
+7. 任意のフォルダに置いてターミナルから実行
    $ python say-ust.py
 
 
