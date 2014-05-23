@@ -22,21 +22,23 @@ sys.stdout = codecs.getwriter('utf_8')(sys.stdout)
 sys.stdin = codecs.getreader('utf_8')(sys.stdin)
 
 def Setup():
-    global mode, name, exception, replace_str
+    global mode, name, exception_ids, replace_str
     
     # 0（ハッシュタグ）、1（メンション）
     mode = 0
     # ハッシュタグもしくはメンションの文字列を指定
     name = 'xxxxx'
-    # 自分自身のツイートを除外する場合、idを指定
-    # （除外しない場合は空白に）
-    exception = 'xxxxx'
+    # ここに指定したユーザのツイートは読み上げから除外
+    #（自分自身を除外する場合もこちらに記入）
+    exception_ids = [
+    'null',
+    'tos'
+    ]
     
     replace_str = [
     # 読み上げ時に置換する文字列をカンマ区切りで指定
     # パターンには正規表現を使用できます
-    #（SayKotoeriに通らない文字は正規表現を使用できません）
-    # 正規表現で()の入れ子には非対応
+    #（SayKotoeriに通らない文字は正規表現を使用できなません）
     # 日本語として読ませたい英数字の単語もこちらに記入
     # デフォルトで指定されてるものは削除しないほうが無難です
     u'[Tt]witter,ツイッター',
@@ -63,6 +65,7 @@ def Setup():
     u'i[Pp]hone,アイフォン',
     u'[Rr]etina,レティーナ',
     u'URL,ユーアールエル',
+    u'CD,シーディー',
     u'DVD,ディーブイディー',
     u'SNS,エスエヌス',
     u'OK,オーケー',
@@ -124,7 +127,7 @@ def get_oauth():
 def str_replace(string):
 
     # Ustが追加する文字列を削除
-    string = re.sub('\([#@]' + name + '[^\)]+\)', '', string)
+    string = re.sub('\(\s?[#@]' + name + '[^\)]+\)', '', string)
     # remove URL
     string = re.sub('(https?|ftp)(:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:\@&=+\$,%#]+)', 'URL', string)
     # remove quote
@@ -202,6 +205,8 @@ def str_replace(string):
     string = re.sub(u'&[A-Za-z]{2,6};', ' ', string)
     string = re.sub(u'[&＆]', u'アンド', string)
     string = re.sub(u'[@＠]', u'アット', string)
+    match = re.compile(ur'([A-Za-z\u3041-\u3096\u30A1-\u30FA\uFF21-\uFF3B\uFF41-\uFF5A])[\-—−――]')
+    string = match.sub(ur'\1の', string)
     
     # SaiKotoeriのエラー対策
     string = string.replace(u'•', u'・')
@@ -327,7 +332,12 @@ def str_replace(string):
 class CustomStreamListener(tweepy.StreamListener):
 
     def on_status(self, status):
-        if not hasattr(status, 'retweeted_status') or (status.author.screen_name == exception) :
+        
+        flg = 0
+        for buff in exception_ids:
+            if (status.author.screen_name == buff) : flg = 1
+        
+        if not hasattr(status, 'retweeted_status') and flg != 1:
             try:
                 print u'\n---{name}/@{screen}---\n   {text}\nvia {src} {created}'.format(
                         name = status.author.name,
@@ -343,7 +353,7 @@ class CustomStreamListener(tweepy.StreamListener):
                 string_en = ''
                 for seg in result:
                     seg = re.sub('^\s+', '', seg)
-                    if (re.match(u'(?:[^\u0000-\u007F]|[\d+]|^[A-Za-rt-z]{1}$)', seg)) :#日本語が含まれる
+                    if (re.match(u'(?:[^\u0000-\u007F]|[\d+]|^[A-Za-rt-z]{1}$)', seg)) and not re.match(u'^[aA]$', seg) :#日本語が含まれる
                         call(['echo "{text}" | say -v Victoria -r 200 >/dev/null 2>&1'.format(text=string_en)], shell=True)
                         string_en = ''
                         string_jp = string_jp + seg
