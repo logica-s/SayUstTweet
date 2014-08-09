@@ -5,6 +5,9 @@ SayUstTweet
 [ Ustream配信時、Twtterのソーシャルストリームを読み上げる for Mac ]
 
 
+※ 要XcodeとCommand Line Tools for Xcodeのインストール、tweepyのインストール
+
+
 2014/5/22のリリースより、TinySegmenter in Pythonを利用して文章を分割し、日本語OR英語を判別し日本語はSayKotoeri2、英語はsayコマンド（VoiceOver Victoria使用）に渡すようになりました！
 
 
@@ -47,17 +50,17 @@ SayUstTweet
    $ python say-ust.py
 
 
-※ PythonのデフォルトエンコーディングをUnicodeに指定しないとエラーが出るかもしれません。
+※ PythonのデフォルトエンコーディングをUnicodeに指定しないとエラーが出ます。
    その場合は、お使いのPythonのsite-packagesディレクトリ以下にsitecustomize.pyを作成し、
    
    
    import sys
+   
    sys.setdefaultencoding("utf-8")
 
    encoding = "utf-8"
    
    と記入してください。
-
 
 
 enjoy!
